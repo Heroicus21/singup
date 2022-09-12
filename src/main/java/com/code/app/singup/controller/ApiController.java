@@ -1,19 +1,17 @@
 package com.code.app.singup.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.code.app.singup.dto.ApiRestDTO;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value="/api-rest")
 public class ApiController {
 
-    @GetMapping( value="/{num1}/{num2}")
-    public String apiRest(@PathVariable (name ="num1") int num1, @PathVariable (name="num2") int num2){
+    @PostMapping(value="/")
+    public String apiRest(@RequestBody ApiRestDTO apiRestDTO){
 
-        int result= num1+num2;
-        return "El porcentaje es: "+result;
+        int result= apiRestDTO.getNum1()+apiRestDTO.getNum2();
+        return "El porcentaje es: %"+result;
 
     }
 }

@@ -7,14 +7,17 @@ import com.code.app.singup.model.Usuario;
 import com.code.app.singup.repo.RolRepositorio;
 import com.code.app.singup.repo.UsuarioRepository;
 import com.code.app.singup.service.AuthService;
+import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+@Service
 public class AuthServiceImpl implements AuthService {
 
     @Autowired
@@ -26,12 +29,15 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginDTO alta(RegistroDTO registroDTO) {
+        Optional<Rol> rol= rolRepositorio.findByNombre("USER");
         PasswordEncoder encoder= new BCryptPasswordEncoder();
         Usuario usuario= new Usuario();
+
         usuario.setPassword(encoder.encode(registroDTO.getPassword()));
         usuario.setEmail(registroDTO.getEmail());
         usuario.setNombre(registroDTO.getNombre());
-        Optional<Rol> rol= rolRepositorio.findByNombre("USER");
+        usuario.setUsername(registroDTO.getUsername());
+
         Set<Rol> rolSet= new HashSet<>();
         rolSet.add(rol.get());
         usuario.setRoles(rolSet);
@@ -44,16 +50,18 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public LoginDTO login(LoginDTO loginDTO) {
+    public LoginDTO login(LoginDTO loginDTO) throws AuthenticationException {
 
         Optional<Usuario> usuario=repository.findByUsernameOrEmail(loginDTO.getUsernameOrEmail(), loginDTO.getUsernameOrEmail());
         Usuario result=usuario.get();
-
+        if (!usuario.get().getPassword().equals(loginDTO.getPassword())){
+            throw new AuthenticationException("La contraseña no coincide");
+        }
         LoginDTO resultDTO= new LoginDTO();
-
         resultDTO.setUsernameOrEmail(result.getUsername());
         resultDTO.setPassword(result.getPassword());
-        return null;
+
+        return resultDTO;
     }
 
 
