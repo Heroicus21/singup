@@ -20,6 +20,19 @@ para ejecutar el proyecto en su container, esto
 
     docker-compose up
 
-Despues de ejecutar esta linea de comando el projecto
-se desplegara en "localhost:8080".
+### Despues de ejecutar esta linea de comando el projecto se desplegara en "localhost:8080".
 
+### Abrir la PGadmin desplegado desde el Docker.
+
+Realizar la conexion tomando los siguientes datos.
+
+        Host: db
+        User: compose-postgres
+        Password: compose-postgres
+
+### Luego de hacer la conexion 
+
+Ejecutar el script guardado en la carpeta resourses del proyecto.
+Este script se llama "roles.sql"
+
+    Luego de todos estos pasos podra operar normalmente.
