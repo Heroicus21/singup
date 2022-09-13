@@ -1,5 +1,6 @@
 package com.code.app.singup.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.HashSet;
@@ -16,6 +17,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+@Builder
 @Data
 @Entity
 @Table(name = "usuarios", uniqueConstraints = { @UniqueConstraint(columnNames = { "username" }),
@@ -31,56 +33,22 @@ public class Usuario {
 	private String email;
 	private String password;
 
+	private int intentos;
+
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "usuarios_roles", joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "rol_id", referencedColumnName = "id"))
 	private Set<Rol> roles = new HashSet<>();
 
-	public long getId() {
-		return id;
+	public Usuario() {
 	}
 
-	public void setId(long id) {
+	public Usuario(long id, String nombre, String username, String email, String password, int intentos, Set<Rol> roles) {
 		this.id = id;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-
-	public void setNombre(String nombre) {
 		this.nombre = nombre;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
 		this.username = username;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public Set<Rol> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(Set<Rol> roles) {
+		this.intentos = intentos;
 		this.roles = roles;
 	}
-
 }

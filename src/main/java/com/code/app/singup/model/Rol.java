@@ -1,5 +1,6 @@
 package com.code.app.singup.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -9,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+@Builder
 @Data
 @Entity
 @Table(name = "roles")
@@ -41,4 +43,8 @@ public class Rol {
 		super();
 	}
 
+	public Rol(long id, String nombre) {
+		this.id = id;
+		this.nombre = nombre;
+	}
 }

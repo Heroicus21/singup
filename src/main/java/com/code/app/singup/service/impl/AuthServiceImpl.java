@@ -7,6 +7,7 @@ import com.code.app.singup.model.Usuario;
 import com.code.app.singup.repo.RolRepositorio;
 import com.code.app.singup.repo.UsuarioRepository;
 import com.code.app.singup.service.AuthService;
+import com.sun.jdi.event.ExceptionEvent;
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,42 +27,69 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private RolRepositorio rolRepositorio;
 
-
+    /**
+     *
+     * @param registroDTO
+     * @return
+     * @throws Exception
+     */
     @Override
-    public LoginDTO alta(RegistroDTO registroDTO) {
-        Optional<Rol> rol= rolRepositorio.findByNombre("USER");
-        PasswordEncoder encoder= new BCryptPasswordEncoder();
-        Usuario usuario= new Usuario();
+    public LoginDTO alta(RegistroDTO registroDTO) throws Exception{
+        try {
+            Optional<Rol> rol= rolRepositorio.findByNombre(registroDTO.getRol());
+            Set<Rol> rolSet= new HashSet<>();
+            PasswordEncoder encoder= new BCryptPasswordEncoder();
 
-        usuario.setPassword(encoder.encode(registroDTO.getPassword()));
-        usuario.setEmail(registroDTO.getEmail());
-        usuario.setNombre(registroDTO.getNombre());
-        usuario.setUsername(registroDTO.getUsername());
+            if (rol.isEmpty()) throw new Exception("Se debe de elegir al menos un rol");
+            rolSet.add(rol.get());
 
-        Set<Rol> rolSet= new HashSet<>();
-        rolSet.add(rol.get());
-        usuario.setRoles(rolSet);
-        Usuario result=repository.save(usuario);
-        LoginDTO loginDTO= new LoginDTO();
-        loginDTO.setPassword(result.getPassword());
-        loginDTO.setUsernameOrEmail(usuario.getUsername());
+            Usuario usuario=  Usuario.builder()
+                    .password(encoder.encode(registroDTO.getPassword()))
+                    .email(registroDTO.getEmail())
+                    .username(registroDTO.getUsername())
+                    .intentos(0)
+                    .roles(rolSet).build();
 
-        return loginDTO;
+            Usuario result=repository.save(usuario);
+            LoginDTO loginDTO= new LoginDTO();
+            loginDTO.setPassword(result.getPassword());
+            loginDTO.setUsernameOrEmail(usuario.getUsername());
+
+            return loginDTO;
+        }
+        catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
     }
 
+    /**
+     *
+     *
+     * @param loginDTO
+     * @return
+     * @throws Exception
+     */
     @Override
-    public LoginDTO login(LoginDTO loginDTO) throws AuthenticationException {
+    public LoginDTO login(LoginDTO loginDTO) throws Exception {
+    try {
+            Optional<Usuario> usuario=repository.findByUsernameOrEmail(loginDTO.getUsernameOrEmail(), loginDTO.getUsernameOrEmail());
+            Usuario result=usuario.get();
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        Optional<Usuario> usuario=repository.findByUsernameOrEmail(loginDTO.getUsernameOrEmail(), loginDTO.getUsernameOrEmail());
-        Usuario result=usuario.get();
-        if (!usuario.get().getPassword().equals(loginDTO.getPassword())){
-            throw new AuthenticationException("La contraseña no coincide");
-        }
+            if (!encoder.matches(loginDTO.getPassword(), result.getPassword())){
+                throw new AuthenticationException("La contraseña no coincide");
+            }
+
         LoginDTO resultDTO= new LoginDTO();
-        resultDTO.setUsernameOrEmail(result.getUsername());
-        resultDTO.setPassword(result.getPassword());
+            resultDTO.setUsernameOrEmail(result.getUsername());
+            resultDTO.setPassword(result.getPassword());
 
-        return resultDTO;
+            return resultDTO;
+
+        }catch (Exception event){
+            throw new Exception("Ocurrio un error");
+    }
+
     }
 
 
