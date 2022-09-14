@@ -5,6 +5,7 @@ import com.code.app.singup.dto.PokemonDTO;
 import com.code.app.singup.model.Usuario;
 import com.code.app.singup.repo.UsuarioRepository;
 import com.code.app.singup.service.ApiService;
+import com.code.app.singup.service.UsuarioHistorialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +20,10 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ApiServiceImpl implements ApiService {
     @Autowired
     private UsuarioRepository repoUsuario;
+
+    @Autowired
+    private UsuarioHistorialService usuarioHistorialService;
+
     @Override
     public String apiService(ApiRestDTO dto) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -38,14 +43,18 @@ public class ApiServiceImpl implements ApiService {
             RestTemplate restTemplate = new RestTemplate();
             PokemonDTO pokemonQueTomaElPorcentaje = restTemplate.getForObject(url, PokemonDTO.class);
 
-            if (usuarioOP.get().getIntentos() > 3) throw new Exception("El usuario no tiene mas intentos disponibles");
-
+            if (usuarioOP.get().getIntentos() > 3) {
+                usuarioHistorialService.guardarHistorial(usuarioOP.get(),"Api service -- Usuario no tiene mas intentos");
+                throw new Exception("El usuario no tiene mas intentos disponibles");
+            }
             int suma = (dto.getNum1() + dto.getNum2()) + pokemonQueTomaElPorcentaje.getPower();
 
             String s = "El porcentage es : %" + suma;
+            usuarioHistorialService.guardarHistorial(usuarioOP.get(),"Api service -- OK");
             return s;
         } catch (RestClientException e) {
             usuarioOP.get().setIntentos(usuarioOP.get().getIntentos() + 1);
+            usuarioHistorialService.guardarHistorial(usuarioOP.get(),"Api service -- Fallo");
             repoUsuario.save(usuarioOP.get());
             throw new RuntimeException(e);
         } catch (Exception e) {

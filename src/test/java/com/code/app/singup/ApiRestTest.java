@@ -7,7 +7,6 @@ import com.code.app.singup.repo.UsuarioRepository;
 import com.code.app.singup.service.ApiService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 

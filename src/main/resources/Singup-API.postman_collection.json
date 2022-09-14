@@ -6,35 +6,6 @@
 	},
 	"item": [
 		{
-			"name": "buscarUser",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n\"usuario\":\"admin\",\r\n\"password\":\"admin\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8080/api/",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "API-REST",
 			"request": {
 				"auth": {
@@ -79,13 +50,61 @@
 			"response": []
 		},
 		{
-			"name": "alta",
+			"name": "Historial de usuario",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "Luck91",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"page\":0,\r\n\"size\":3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api-rest/historial/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api-rest",
+						"historial",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Alta de usuario",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\":\"Luck91\",\r\n    \"nombre\":\"Lucky Look\",\r\n    \"password\":\"password\",\r\n    \"email\":\"lucklook@lucky.com\"\r\n}",
+					"raw": "{\r\n    \"username\":\"Luck91\",\r\n    \"nombre\":\"Lucky Look\",\r\n    \"password\":\"password\",\r\n    \"email\":\"lucklook@lucky.com\",\r\n    \"rol\":\"ADMIN\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -108,7 +127,7 @@
 			"response": []
 		},
 		{
-			"name": "login",
+			"name": "UserCheck",
 			"request": {
 				"method": "POST",
 				"header": [],
