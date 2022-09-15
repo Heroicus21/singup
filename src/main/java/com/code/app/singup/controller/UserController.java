@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value ="/auth")
 public class UserController extends BaseController{
+    public static final String USUARIO_ACTIVO = "Usuario activo";
     @Autowired
     AuthService authenticateService;
 
@@ -42,7 +43,7 @@ public class UserController extends BaseController{
     public ResponseDTO<LoginDTO> login(@RequestBody LoginDTO dto) throws Exception {
         try {
             LoginDTO loginDTO=authenticateService.login(dto);
-            return response(loginDTO,"Usuario activo");
+            return response(loginDTO, USUARIO_ACTIVO);
         }catch (Exception e ){
             return fail(e.getMessage());
         }
