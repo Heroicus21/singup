@@ -1,21 +1,19 @@
 package com.code.app.singup.controller;
 
 import com.code.app.singup.dto.ApiRestDTO;
-import com.code.app.singup.dto.UsuarioHistorialDTO;
+import com.code.app.singup.dto.ResponseDTO;
 import com.code.app.singup.model.UsuarioHistorial;
 import com.code.app.singup.service.ApiService;
 import com.code.app.singup.service.UsuarioHistorialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value="/api-rest")
-public class ApiController {
+public class ApiController extends BaseController{
 
     @Autowired
     private ApiService apiService;
@@ -30,21 +28,23 @@ public class ApiController {
      */
     @PreAuthorize("hasRole('USER')")
     @PostMapping(value="/")
-    public ResponseEntity<String> apiRest(@RequestBody ApiRestDTO apiRestDTO){
-
-        String result= apiService.apiService(apiRestDTO);
-        return new ResponseEntity<String>(result, HttpStatus.OK);
+    public ResponseDTO<String> apiRest(@RequestBody ApiRestDTO apiRestDTO){
+        try {
+            String result= apiService.apiService(apiRestDTO);
+            return  response200Ok(result);
+        } catch (Exception e ){
+            return fail(e.getMessage());
+        }
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value="/historial/{page}")
-    public Page<UsuarioHistorial> verHistorial(@PathVariable Integer page) throws Exception {
-
-        try{
-            return  usuarioHistorialService.verHistorialDeUsuario(PageRequest.of(page,5));
-        }catch (Exception e){
-            throw new Exception("Ocurrio un error");
-
+    public ResponseDTO<Page<UsuarioHistorial>> verHistorial(@PathVariable Integer page) throws Exception {
+        try {
+            Page<UsuarioHistorial> result= usuarioHistorialService.verHistorialDeUsuario(PageRequest.of(page,5));
+            return  response200Ok(result);
+        } catch (Exception e ){
+            return fail(e.getMessage());
         }
     }
 

@@ -47,13 +47,14 @@ public class AuthServiceImpl implements AuthService {
                     .password(encoder.encode(registroDTO.getPassword()))
                     .email(registroDTO.getEmail())
                     .username(registroDTO.getUsername())
+                    .nombre(registroDTO.getNombre())
                     .intentos(0)
                     .roles(rolSet).build();
 
             Usuario result=repository.save(usuario);
-            LoginDTO loginDTO= new LoginDTO();
-            loginDTO.setPassword(result.getPassword());
-            loginDTO.setUsernameOrEmail(usuario.getUsername());
+            LoginDTO loginDTO= LoginDTO.builder()
+                    .usernameOrEmail(result.getUsername())
+                    .build();
 
             return loginDTO;
         }
