@@ -36,3 +36,5 @@ Ejecutar el script guardado en la carpeta resourses del proyecto.
 Este script se llama "roles.sql"
 
     Luego de todos estos pasos podra operar normalmente.
+    
+## Consulte la Wikki para mas informacion.
